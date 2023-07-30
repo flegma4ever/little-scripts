@@ -9,7 +9,7 @@ classes = {'mage': ['druid', 'sun_mage', 'dark_mage'],
            'melee': ['paladin', 'assassin', 'knight'],
            'ranged': ['musketeer', 'archer', 'hunter']
            }
-
+enemies = ['slime', 'bandit', 'skeleton', 'skeleton_archer']
 
 # ------------------CHANCES--------------------------------------->
 
