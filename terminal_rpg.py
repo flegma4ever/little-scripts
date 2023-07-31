@@ -5,11 +5,10 @@ floor_number = 0
 room_number = 0  # 5 - 9 комнат на этаж
 step_counter = 0  # шаги действий
 balance = 0
-classes = {'mage': ['druid', 'sun_mage', 'dark_mage'],
-           'melee': ['paladin', 'assassin', 'knight'],
-           'ranged': ['musketeer', 'archer', 'hunter']
-           }
-enemies = ['slime', 'bandit', 'skeleton', 'skeleton_archer']
+classes = ['mage', 'melee', 'ranged']
+
+enemies = ['slime', 'bandit', 'skeleton', 'skeleton_archer', 'dark_mage']
+
 
 # ------------------CHANCES--------------------------------------->
 
@@ -42,11 +41,13 @@ def critical_chance(crit_chance):
 
 
 class Player:
-    def __init__(self, clas, name, mana, hp, speed, acc, crit, luck,
-                 char, phys_dam, mag_dam, phys_def, mag_def, lvl, xp, skil_lvl):
+    def __init__(self, clas, name, mana,  hp, speed, acc, crit, luck,
+                 char, phys_dam, mag_dam, phys_def, mag_def, lvl, xp, skil_lvl, mxhp,
+                 next_lvl_xp, full_mana):
         self.clas = clas
         self.name = name
         self.mana = mana
+        self.max_health = mxhp
         self.health = hp
         self.speed = speed
         self.accuracy = acc
@@ -60,6 +61,8 @@ class Player:
         self.level = lvl
         self.experience = xp
         self.skills_lev = skil_lvl
+        self.next_lvl_xp = next_lvl_xp
+        self.full_mana = full_mana
 
     def player_mag_attack_damage(self, target):
         damage = int(target.mag_def - self.mag_damage)
@@ -89,7 +92,8 @@ class Player:
 # ------------------ENEMIES------------------------------->
 
 class Enemy:
-    def __init__(self, hp, mag_dam, phys_dam, acc, mag_def, phys_def, crit, lev, icon, exp):
+    def __init__(self, hp, mxhp, mag_dam, phys_dam, acc, mag_def, phys_def, crit, lev, icon, exp, coins):
+        self.max_hp = mxhp
         self.health = hp
         self.mag_damage = mag_dam
         self.phys_damage = phys_dam
@@ -100,6 +104,7 @@ class Enemy:
         self.level = lev
         self.icon = icon
         self.exp = exp
+        self.coins = coins
 
     def enemy_phys_attack(self):
         if hit_chance(self.accuracy):
@@ -131,9 +136,29 @@ class Enemy:
 # level = 0
 # icon = None
 # exp = 10
+slime = Enemy(20, 0, 10, 0.4, 5, 8, 0.01, 0, 'nothing', 10, 5, 20)
 
-slime = Enemy(20, 0, 10, 0.4, 5, 8, 0.01, 0, 'nothing', 10)
 
-print('<' + '*' * 80 + '-' * 20 + '>')
+# ------------------GAME---------------------------------------------------------------------->
+player = Player('mage', 'lox', 90, 80, 0.1, 0.7, 0.03, 2, 4, 8, 20, 10, 25, 1, 0, [0], 100, 75, 120)
 
-print(slime.health)
+
+def calculate(param):
+    if param == 'hp':
+        return (player.health * 100) // player.max_health
+    else:
+        return (player.mana * 100) // player.full_mana
+
+
+def window():
+    print('_' * 160)
+    print('-' * 160)
+    print('<' + 'X' * calculate('hp') + '_' * (100 - calculate('hp')) + '>', f'Health: {player.health}/{player.max_health}')
+    print('<' + '*' * calculate('mana') + '_' * (100 - calculate('mana')) + '>', f'Mana: {player.mana}/{player.full_mana}')
+    print('\n' * 7)
+    print('_' * 160)
+    print('-' * 160)
+
+
+window()
+
