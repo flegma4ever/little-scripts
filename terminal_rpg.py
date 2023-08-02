@@ -7,8 +7,6 @@ step_counter = 0  # шаги действий
 balance = 0
 classes = ['mage', 'melee', 'ranged']
 
-enemies = ['slime', 'bandit', 'skeleton', 'skeleton_archer', 'dark_mage']
-
 
 # ------------------CHANCES--------------------------------------->
 
@@ -37,11 +35,18 @@ def critical_chance(crit_chance):
     return result
 
 
+def fib(n):
+    lst = [1, 1]
+    for i in range(2, n):
+        lst.append(lst[i - 1] + lst[i - 2])
+    print(*lst)
+
+
 # ------------------PLAYER_ACTIONS------------------------------->
 
 
 class Player:
-    def __init__(self, clas, name, mana,  hp, speed, acc, crit, luck,
+    def __init__(self, clas, name, mana, hp, speed, acc, crit, luck,
                  char, phys_dam, mag_dam, phys_def, mag_def, lvl, xp, skil_lvl, mxhp,
                  next_lvl_xp, full_mana):
         self.clas = clas
@@ -73,7 +78,7 @@ class Player:
         return damage
 
     def player_phys_attack(self, target):
-        result = self.player_phys_attack_damage(self, target) - target.phys_def
+        result = self.player_phys_attack_damage(target) - target.phys_def
         if result >= 0:
             target.health -= result
         else:
@@ -92,7 +97,7 @@ class Player:
 # ------------------ENEMIES------------------------------->
 
 class Enemy:
-    def __init__(self, hp, mxhp, mag_dam, phys_dam, acc, mag_def, phys_def, crit, lev, icon, exp, coins):
+    def __init__(self, hp, mag_dam, phys_dam, acc, mag_def, phys_def, crit, lev, exp, coins, mxhp):
         self.max_hp = mxhp
         self.health = hp
         self.mag_damage = mag_dam
@@ -102,9 +107,9 @@ class Enemy:
         self.phys_def = phys_def
         self.crit_chance = crit
         self.level = lev
-        self.icon = icon
         self.exp = exp
         self.coins = coins
+        self.mxhp = mxhp
 
     def enemy_phys_attack(self):
         if hit_chance(self.accuracy):
@@ -126,8 +131,17 @@ class Enemy:
             enemy_damage = 0
         return enemy_damage
 
+    def enemy_hp_calc(self):
+        mxhp = self.health + floor_number * 5 + self.level * 2
+        return mxhp
 
-# mag_damage = 0
+    enemies = ['slime', 'bandit', 'skeleton', 'skeleton_archer', 'dark_mage']
+
+    e_mxhp = 1
+
+    # mag_damage = 0
+
+
 # phys_damage = 10
 # accuracy = 0.4
 # mag_def = 5
@@ -136,8 +150,7 @@ class Enemy:
 # level = 0
 # icon = None
 # exp = 10
-slime = Enemy(20, 0, 10, 0.4, 5, 8, 0.01, 0, 'nothing', 10, 5, 20)
-
+slime = Enemy(20, 5, 12, 0.6, 5, 10, 0.02, )
 
 # ------------------GAME---------------------------------------------------------------------->
 player = Player('mage', 'lox', 90, 80, 0.1, 0.7, 0.03, 2, 4, 8, 20, 10, 25, 1, 0, [0], 100, 75, 120)
@@ -152,13 +165,15 @@ def calculate(param):
 
 def window():
     print('_' * 160)
-    print('-' * 160)
-    print('<' + 'X' * calculate('hp') + '_' * (100 - calculate('hp')) + '>', f'Health: {player.health}/{player.max_health}')
-    print('<' + '*' * calculate('mana') + '_' * (100 - calculate('mana')) + '>', f'Mana: {player.mana}/{player.full_mana}')
+    print('-' * 100, f'Floor:{floor_number} | Room:{room_number} | Step:{step_counter} | Balance:{balance}')
+    print('Player:')
+    print('<' + 'X' * calculate('hp') + '_' * (100 - calculate('hp')) + '>',
+          f'Health: {player.health}/{player.max_health}')
+    print('<' + '*' * calculate('mana') + '_' * (100 - calculate('mana')) + '>',
+          f'Mana: {player.mana}/{player.full_mana}')
     print('\n' * 7)
     print('_' * 160)
     print('-' * 160)
 
 
 window()
-
